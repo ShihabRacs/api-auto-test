@@ -12,7 +12,7 @@ public class getProperties {
 
         FileReader reader = null;
         try {
-            reader = new FileReader("system.properties");
+            reader = new FileReader("src\\test\\resources\\system.properties");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
