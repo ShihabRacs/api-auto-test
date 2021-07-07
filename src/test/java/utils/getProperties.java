@@ -31,7 +31,7 @@ public class getProperties {
         return props.getProperty(proName);
     }
 
-    public static void main(){
+    public static void main(String args[]){
         System.out.println(getSpecificProperty("users"));
     }
 }
