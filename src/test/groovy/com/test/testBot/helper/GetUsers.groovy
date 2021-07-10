@@ -9,29 +9,21 @@ class GetUsers {
     static def jsonSlurper = new JsonSlurper()
     private static Logger logger = LoggerFactory.getLogger(Requestor.class)
 
-    static def getSpecificUser(ArrayList users,String neededUserName){
 
-//        def userList = jsonSlurper.parseText(JsonOutput.toJson(users))
-//        logger.info("**********************************"+userList)
+    static def getSpecificUser(String neededUserName){
 
+        def response = Requestor.requestToApi("users")
+        logger.info("The user List is :")
+        logger.info(JsonOutput.toJson(response.data))
+        def users = jsonSlurper.parseText(JsonOutput.toJson(response.data))
         def neededUser
         for(user in users){
-            if (user.username == neededUserName)
+            if (user.username == neededUserName) {
                 neededUser = user
+                return jsonSlurper.parseText(JsonOutput.toJson(neededUser))
+            }
         }
-        return jsonSlurper.parseText(JsonOutput.toJson(neededUser))
+        return null
     }
 
-    static def getSpecificUserId(ArrayList users,String neededUserName){
-
-//        def userList = jsonSlurper.parseText(JsonOutput.toJson(users))
-//        logger.info("**********************************"+userList)
-
-        def neededUser
-        for(user in users){
-            if (user.username == neededUserName)
-                neededUser = user
-        }
-        return neededUser.id
-    }
 }

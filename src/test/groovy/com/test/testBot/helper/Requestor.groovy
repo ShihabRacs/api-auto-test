@@ -26,14 +26,13 @@ class Requestor {
             def correlationHeader = new HeaderBuilder().build()
             def path = GetProperties.getSpecificProperty(reqPath)
 
-            logger.info("\nRequest URL: " + restClient.getUri().toString() + path + "\nRequest data : " + JsonOutput.toJson(request))
+            logger.info("\nRequest URL: " + restClient.getUri().toString() + path)
 
             response = restClient.get(
                     headers: correlationHeader,
                     path: path,
                     requestContentType: contentType
             )
-            logger.info("\nRequest header "+correlationHeader.toString())
 
             logger.info("Response data  : " + response)
         return response
