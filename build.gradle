@@ -3,7 +3,7 @@ plugins {
     id 'java'
 }
 
-group 'org.example'
+group 'com.test.testBot'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'groovy'
@@ -17,16 +17,32 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy-all:3.0.5'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
-    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
+    compile "org.codehaus.groovy:groovy-all:2.4.1"
+
+    compile "org.jsoup:jsoup:1.6.1"
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+    testCompile "org.hamcrest:hamcrest-core:1.3"
+    testCompile "cglib:cglib-nodep:3.1"
+    testCompile "org.codehaus.groovy.modules.http-builder:http-builder:0.7"
+    compile "org.codehaus.gpars:gpars:1.2.1"
+// https://mvnrepository.com/artifact/com.athaydes/spock-reports
+    testCompile group: 'com.athaydes', name: 'spock-reports', version: '1.2.10'
+
+    // https://mvnrepository.com/artifact/org.iban4j/iban4j
+    compile group: 'org.iban4j', name: 'iban4j', version: '3.2.1'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+// https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+// https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
 
 }
 
-test {
-    useJUnitPlatform()
+
+task testBot(type: Test, overwrite: true){
+    systemProperty 'com.athaydes.spockframework.report.outputDir', 'build/reports/spock'
 }
+
+
+

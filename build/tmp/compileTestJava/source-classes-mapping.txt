@@ -1,2 +1,0 @@
-utils/getProperties.java
- utils.getProperties
