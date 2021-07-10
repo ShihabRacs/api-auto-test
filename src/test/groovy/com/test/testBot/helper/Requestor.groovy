@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory
 import utils.GetProperties
 import utils.HeaderBuilder
 
-class requestor {
+class Requestor {
 
-    private static Logger logger = LoggerFactory.getLogger(requestor.class)
+    private static Logger logger = LoggerFactory.getLogger(Requestor.class)
 
     static def restClient = new RESTClient(GetProperties.getSpecificProperty("baseUrl"))
     static def jsonSlurper = new JsonSlurper()

@@ -1,4 +1,5 @@
-import com.test.testBot.helper.requestor
+import com.test.testBot.helper.Requestor
+import com.test.testBot.helper.GetUsers
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.junit.Rule
@@ -7,13 +8,14 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Specification
 import spock.lang.Unroll
+import utils.GetProperties
 
 class specClass extends Specification  {
 
     @Rule
     TestName testName = new TestName()
 
-    private static Logger logger = LoggerFactory.getLogger(requestor.class)
+    private static Logger logger = LoggerFactory.getLogger(Requestor.class)
     def jsonSlurper = new JsonSlurper()
 
     static def scenarioCount = 1
@@ -31,21 +33,16 @@ class specClass extends Specification  {
         given: "requesting the API for the user list"
         logger.info ("----------------------------requesting the API for the users----------------------------")
 
-        when: " We check for a bank account validation"
-        logger.info ("We check for a bank account validation")
-        def response = requestor.requestToApi("users")
+        when: " We search for the user"
+        logger.info ("We search for the user")
+        def response = Requestor.requestToApi("users")
 
-        logger.info("This is the response " + JsonOutput.toJson(response.data))
+        and: "we search for the specific user from the list"
 
-        logger.info("This is the response Code " + response.responseBase.statusline.statusCode)
-        def userList = jsonSlurper.parseText(JsonOutput.toJson(response.data))
-        def neededUser
-        for(user in userList){
-            if (user.username == "Delphine")
-                neededUser = user
-        }
+        def neededUser = GetUsers.getSpecificUser(jsonSlurper.parseText(JsonOutput.toJson(response.data)),
+                        GetProperties.getSpecificProperty("username"))
 
-        logger.info("delphine is here "+ JsonOutput.toJson(neededUser))
+        def neededuserName = GetProperties.getSpecificProperty("username")
 
         then: "we check if the response is correct or not"
         logger.info("we check if the response is correct or not")
@@ -54,11 +51,21 @@ class specClass extends Specification  {
         logger.info("This is the response " + response.responseBase.statusline.statusCode)
         logger.info("Response is expected")
 
+        and: " if the user is found or not"
+        logger.info("we check if the user is found or not")
+        neededUser.username == neededuserName
+        logger.info("Expected username is " +username)
+        logger.info("This is the user from response list " + neededUser.username)
+        logger.info("user is found")
+
         where: "a set of other parameters"
-        responseStatus | scenarioSerial
-        200 | scenarioSerial
+        username | responseStatus | scenarioSerial
+        "Delphine" | 200 | scenarioSerial
 
     }
+
+
+  
 
 
 
