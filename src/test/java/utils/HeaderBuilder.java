@@ -27,9 +27,6 @@ public class HeaderBuilder {
     }
 
 
-
-
-
     public HeaderBuilder addRequestType(String requestType) {
         this.requestType = requestType;
         return this;

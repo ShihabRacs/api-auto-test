@@ -1,6 +1,5 @@
-import com.test.testBot.helper.GetPosts
+import com.test.testBot.helper.GetterUtils
 import com.test.testBot.helper.Requestor
-import com.test.testBot.helper.GetUsers
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.junit.Rule
@@ -9,6 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Specification
 import spock.lang.Unroll
+import utils.EmailUtil
 import utils.GetProperties
 
 class specClass extends Specification  {
@@ -31,8 +31,8 @@ class specClass extends Specification  {
         scenarioSerial = scenarioCount
 
         //searching for the user and posts and comments
-        neededUser = GetUsers.getSpecificUser(GetProperties.getSpecificProperty("username"))
-        neededposts = GetPosts.getSpecificPosts(neededUser.id)
+        neededUser = GetterUtils.getSpecificUser(GetProperties.getSpecificProperty("username"))
+        neededposts = GetterUtils.getSpecificPosts(neededUser.id)
     }
 
     @Unroll
@@ -73,7 +73,7 @@ class specClass extends Specification  {
         when: " We search for the user"
         logger.info ("We search for the user")
 
-        def neededInvalidUser = GetUsers.getSpecificUser(GetProperties.getSpecificProperty("invalidname"))
+        def neededInvalidUser = GetterUtils.getSpecificUser(GetProperties.getSpecificProperty("invalidname"))
 
         def neededuserName = GetProperties.getSpecificProperty("invalidname")
 
@@ -98,8 +98,10 @@ class specClass extends Specification  {
         logger.info ("We take the userId from the previous case")
 
         and: "we check for the posts of the user"
-        logger.info ("posts of the user are")
-        logger.info (neededposts.toString())
+        logger.info ("postIDs of the user are")
+        for (post in neededposts) {
+            logger.info(post.id.toString())
+        }
 
 
         then: "we check if the posts are from the correct users"
@@ -113,7 +115,66 @@ class specClass extends Specification  {
 
     }
 
+    @Unroll
+    def " (#scenarioSerial) searching for Delphine's posts' Comments"() {
+        given: "we know the user ID from previous cases"
+
+        when: " We search for the user"
+        logger.info ("We take the userId from the previous case")
+
+        and: "we check for the posts of the user"
+        logger.info ("postIDs of the user are")
+        for (post in neededposts) {
+            logger.info(post.id.toString())
+        }
+
+        logger.info ("checking the comments of the posts and get the emails")
+
+        then: "we check if there are comments or not"
+        logger.info ("checking if there are comments or not")
+        for (post in neededposts){
+            ArrayList comments = GetterUtils.getCommentsforPosts(post.id)
+            logger.info ("And comment Ids of the post "+post.id+" are")
+            logger.info (comments.id.toString())
+            comments.id != null
+        }
 
 
+        where: "a set of other parameters"
+        responseStatus | scenarioSerial
+        200 | scenarioSerial
+
+    }
+
+
+    @Unroll
+    def " (#scenarioSerial) searching for Delphine's posts' Comments and validate emails"() {
+        given: "we know the user ID from previous cases"
+
+        when: " We search for the users posts and comments and emails"
+        logger.info ("the comments of the posts and get the emails")
+        def neededEmails
+        then: "we check if the emails are valid or not"
+        logger.info ("*************** checking if all the emails of commenters are valid or not ***************")
+        for (post in neededposts){
+            neededEmails = GetterUtils.getEmailsofComments(post.id)
+            for (email in neededEmails){
+                def status = EmailUtil.validate(email)
+                if(status){
+                    logger.info(email+" is valid")
+                    status == true
+                }
+                else {
+                    logger.info(email+" is invalid")
+                    status == false
+                }
+            }
+        }
+
+        where: "a set of other parameters"
+        responseStatus | scenarioSerial
+        200 | scenarioSerial
+
+    }
 
 }

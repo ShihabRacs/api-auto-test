@@ -22,7 +22,6 @@ class Requestor {
         def response
         try {
 
-
             def correlationHeader = new HeaderBuilder().build()
             def path = GetProperties.getSpecificProperty(reqPath)
 
@@ -34,7 +33,7 @@ class Requestor {
                     requestContentType: contentType
             )
 
-            logger.info("Response data  : " + response)
+//            logger.info("Response data  : " + response)
         return response
 //        return JsonOutput.toJson(response.data)
         }
@@ -44,5 +43,29 @@ class Requestor {
         }
     }
 
+    static def requestToApi(String reqPath, int postId) {
+        def response
+        try {
+
+            def correlationHeader = new HeaderBuilder().build()
+            def path = GetProperties.getSpecificProperty(reqPath)
+            path = path.replace("#",String.valueOf(postId))
+            logger.info("\nRequest URL: " + restClient.getUri().toString() + path)
+
+            response = restClient.get(
+                    headers: correlationHeader,
+                    path: path,
+                    requestContentType: contentType
+            )
+
+//            logger.info("Response data  : " + response)
+            return response
+//        return JsonOutput.toJson(response.data)
+        }
+        catch (Exception ex) {
+            return ExceptionHelper.handleException(ex)
+
+        }
+    }
 
 }
