@@ -29,6 +29,10 @@ class specClass extends Specification  {
         logger.info("\n\n================================== Scenario (Sync) - " + testName.methodName + " =======================================\n")
         ++scenarioCount
         scenarioSerial = scenarioCount
+
+        //searching for the user and posts and comments
+        neededUser = GetUsers.getSpecificUser(GetProperties.getSpecificProperty("username"))
+        neededposts = GetPosts.getSpecificPosts(neededUser.id)
     }
 
     @Unroll
@@ -44,7 +48,7 @@ class specClass extends Specification  {
 
         and: "we search for the specific user from the list"
 
-        neededUser = GetUsers.getSpecificUser(GetProperties.getSpecificProperty("username"))
+
         def neededuserName = GetProperties.getSpecificProperty("username")
 
         then: "if the user is found or not"
@@ -92,17 +96,16 @@ class specClass extends Specification  {
 
         when: " We search for the user"
         logger.info ("We take the userId from the previous case")
-        def neededUserId = neededUser.id
 
-        logger.info ("----------------------------requesting the API for the Posts----------------------------")
         and: "we check for the posts of the user"
+        logger.info ("posts of the user are")
+        logger.info (neededposts.toString())
 
-        neededposts = GetPosts.getSpecificPosts(neededUserId)
 
-
-
-        then: "we check if the response is correct or not"
-
+        then: "we check if the posts are from the correct users"
+        logger.info ("checking one of the posts userId for validation")
+        neededposts.get(0).userId == neededUser.id
+        logger.info ("posts found for that user")
 
         where: "a set of other parameters"
         responseStatus | scenarioSerial
